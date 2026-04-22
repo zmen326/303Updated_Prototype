@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shared Power Bank App Prototype</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .phone {
+      width: 100%;
+      max-width: 380px;
+    }
+    .card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+    .hidden { display: none; }
+    .center { text-align: center; }
+    .icon-box {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 18px;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+    }
+    h1, h2, p, h3 { margin: 0; }
+    .subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .qr-box {
+      margin-top: 20px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 24px;
+      background: #f8fafc;
+      padding: 24px;
+      text-align: center;
+    }
+    .fake-qr {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px;
+      background:
+        linear-gradient(90deg, #111 10px, transparent 10px) 0 0/20px 20px,
+        linear-gradient(#111 10px, transparent 10px) 0 0/20px 20px,
+        linear-gradient(90deg, transparent 10px, #111 10px) 10px 10px/20px 20px,
+        linear-gradient(transparent 10px, #111 10px) 10px 10px/20px 20px,
+        #fff;
+      border: 8px solid #111;
+      border-radius: 8px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .info-box {
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 16px;
+    }
+    .info-label {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .info-value {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 18px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: 0.2s;
+    }
+    .btn-primary {
+      background: #0f172a;
+      color: white;
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .btn-secondary:hover { opacity: 0.92; }
+    .btn-success {
+      background: #16a34a;
+      color: white;
+    }
+    .btn-success:hover { opacity: 0.92; }
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+    .btn-danger:hover { opacity: 0.92; }
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .badge.success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .badge.neutral {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .timer-box {
+      margin-top: 20px;
+      background: #0f172a;
+      color: white;
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+    }
+    .timer-label {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .timer {
+      font-size: 36px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 999px;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+    }
+    .settlement-box {
+      margin-top: 20px;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 18px;
+    }
+    .settlement-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 15px;
+      gap: 12px;
+    }
+    .settlement-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .settlement-total {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .warning-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fef2f2;
+      color: #b91c1c;
+      font-size: 14px;
+      line-height: 1.5;
+      border: 1px solid #fecaca;
+    }
+    .payment-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .payment-option {
+      border: 2px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #fff;
+    }
+    .payment-option.active {
+      border-color: #0f172a;
+      background: #f8fafc;
+    }
+    .payment-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .payment-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .check-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid #94a3b8;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .payment-option.active .check-dot {
+      border-color: #0f172a;
+    }
+    .payment-option.active .check-dot::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 999px;
+      background: #0f172a;
+    }
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .text-link {
+      border: none;
+      background: none;
+      color: #64748b;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+    }
+    .spinner {
+      width: 64px;
+      height: 64px;
+      margin: 8px auto 18px;
+      border-radius: 999px;
+      border: 6px solid #e2e8f0;
+      border-top-color: #0f172a;
+      animation: spin 1s linear infinite;
+    }
+    .confirm-box {
+      margin-top: 18px;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 16px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .note-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 14px;
+      line-height: 1.5;
+      border: 1px solid #bfdbfe;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div id="homePage" class="card">
+      <div class="icon-box">🔋</div>
+      <div class="center">
+        <h1>Shared Power Bank</h1>
+        <p class="subtitle">Scan the QR code to start your rental. A bond payment is required before renting.</p>
+      </div>
+
+      <div class="qr-box">
+        <div class="fake-qr"></div>
+        <p><strong>QR Entry</strong></p>
+        <p class="subtitle">Scan to start renting a power bank</p>
+      </div>
+
+      <div class="grid">
+        <div class="info-box">
+          <div class="info-label">Rental Price</div>
+          <div class="info-value">$0.50 / 30 mins</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Bond Status</div>
+          <div id="bondStatusText" class="info-value">Unpaid</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="info-box">
+          <div class="info-label">Bond Amount</div>
+          <div class="info-value">$90.00</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Flow</div>
+          <div class="info-value">Bond → Rent → Return</div>
+        </div>
+      </div>
+
+      <div id="rentWarning" class="warning-box hidden">Please pay the bond before starting a rental.</div>
+
+      <button id="bondButton" class="btn btn-secondary" onclick="goToBondPage()">Pay / Manage Bond</button>
+      <button class="btn btn-primary" onclick="startRental()">Rent Now</button>
+    </div>
+
+    <div id="bondPage" class="card hidden">
+      <div class="top-row">
+        <span id="bondBadge" class="badge pending">Bond Payment</span>
+        <button class="text-link" onclick="goHome()">Back to Home</button>
+      </div>
+
+      <h2 style="margin-top:16px;">Bond Management</h2>
+      <p class="subtitle">Pay the bond before renting. If the bond has already been paid, you can request a refund here. After a refund, the bond must be paid again before the next rental.</p>
+
+      <div class="settlement-box" style="margin-top:16px;">
+        <div class="settlement-row">
+          <span>Bond Amount</span>
+          <strong>$90.00</strong>
+        </div>
+        <div class="settlement-row">
+          <span>Current Status</span>
+          <strong id="bondPageStatus">Unpaid</strong>
+        </div>
+        <div class="settlement-row">
+          <span>Last Payment Method</span>
+          <strong id="bondPageMethod">Not paid yet</strong>
+        </div>
+      </div>
+
+      <div class="payment-list">
+        <div class="payment-option" onclick="selectPayment('Mastercard / Visa', this)">
+          <div class="payment-left">
+            <div class="payment-icon">💳</div>
+            <div>
+              <strong>Mastercard / Visa</strong>
+              <p class="subtitle" style="margin-top:4px;">Card payment</p>
+            </div>
+          </div>
+          <div class="check-dot"></div>
+        </div>
+
+        <div class="payment-option" onclick="selectPayment('Account2Account', this)">
+          <div class="payment-left">
+            <div class="payment-icon">🏦</div>
+            <div>
+              <strong>Account2Account</strong>
+              <p class="subtitle" style="margin-top:4px;">NZ bank transfer</p>
+            </div>
+          </div>
+          <div class="check-dot"></div>
+        </div>
+
+        <div class="payment-option" onclick="selectPayment('Apple Pay', this)">
+          <div class="payment-left">
+            <div class="payment-icon">🍎</div>
+            <div>
+              <strong>Apple Pay</strong>
+              <p class="subtitle" style="margin-top:4px;">Fast checkout</p>
+            </div>
+          </div>
+          <div class="check-dot"></div>
+        </div>
+      </div>
+
+      <div id="bondNote" class="note-box">Select a payment method and pay the bond to unlock renting.</div>
+      <div id="bondWarning" class="warning-box hidden">Please choose a payment method first.</div>
+
+      <button id="payBondButton" class="btn btn-success" onclick="payBond()">Confirm Bond Payment</button>
+      <button id="refundBondButton" class="btn btn-danger hidden" onclick="refundBond()">Request Bond Refund</button>
+    </div>
+
+    <div id="rentalPage" class="card hidden">
+      <div class="center">
+        <span class="badge success">Rental in Progress</span>
+        <h2 style="margin-top:16px;">Power Bank in Use</h2>
+        <p class="subtitle">Track the current rental time and charge in real time</p>
+      </div>
+
+      <div class="timer-box">
+        <div class="timer-label">Usage Time</div>
+        <div id="timer" class="timer">00:00:00</div>
+      </div>
+
+      <div class="grid">
+        <div class="info-box">
+          <div class="info-label">Current Charge</div>
+          <div id="fee" class="info-value">$0.00</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Status</div>
+          <div class="info-value">In Use</div>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="returnPowerBank()">Return Power Bank</button>
+    </div>
+
+    <div id="confirmingPage" class="card hidden">
+      <div class="center">
+        <div class="spinner"></div>
+        <h2>Confirming in the Background</h2>
+        <p class="subtitle">The system is verifying the return status, device ID, and order details. Please wait…</p>
+      </div>
+
+      <div class="confirm-box">
+        Your return request has been received and is being synced with the billing system.<br />
+        Once confirmed, the rental charge will be generated automatically.
+      </div>
+    </div>
+
+    <div id="returnedPage" class="card hidden">
+      <div class="success-icon">✓</div>
+      <div class="center">
+        <h2>Return Successful</h2>
+        <p class="subtitle" style="margin-top:8px;">The return has been confirmed and the rental has now been billed.</p>
+      </div>
+
+      <div class="settlement-box">
+        <h3 style="margin-bottom: 12px;">Billing Summary</h3>
+        <div class="settlement-row">
+          <span>Total Usage Time</span>
+          <strong id="finalTime">00:00:00</strong>
+        </div>
+        <div class="settlement-row">
+          <span>Pricing Rule</span>
+          <strong>$0.50 / 30 mins</strong>
+        </div>
+        <div class="settlement-row">
+          <span>Bond Status</span>
+          <strong id="finalBondStatus">Verified</strong>
+        </div>
+        <div class="settlement-row settlement-total">
+          <span>Total Charge</span>
+          <strong id="finalFee">$0.00</strong>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goHome()">Back to Home</button>
+    </div>
+  </div>
+
+  <script>
+    let startTime = null;
+    let timerInterval = null;
+    let bondPaid = false;
+    let selectedPaymentMethod = '';
+    let lastBondPaymentMethod = '';
+
+    const PRICE_PER_BLOCK = 0.5;
+    const BLOCK_MINUTES = 30;
+    const BOND_AMOUNT = 90;
+
+    function showPage(pageId) {
+      document.getElementById('homePage').classList.add('hidden');
+      document.getElementById('bondPage').classList.add('hidden');
+      document.getElementById('rentalPage').classList.add('hidden');
+      document.getElementById('confirmingPage').classList.add('hidden');
+      document.getElementById('returnedPage').classList.add('hidden');
+      document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    function formatTime(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+    }
+
+    function calculateFee(elapsedSeconds) {
+      const elapsedMinutes = elapsedSeconds / 60;
+      const fee = (elapsedMinutes / BLOCK_MINUTES) * PRICE_PER_BLOCK + 0.15;
+      return fee.toFixed(2);
+    }
+
+    function clearPaymentSelection() {
+      selectedPaymentMethod = '';
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('active');
+      });
+    }
+
+    function updateBondUI() {
+      const bondStatusText = document.getElementById('bondStatusText');
+      const bondButton = document.getElementById('bondButton');
+      const finalBondStatus = document.getElementById('finalBondStatus');
+      const bondBadge = document.getElementById('bondBadge');
+      const bondPageStatus = document.getElementById('bondPageStatus');
+      const bondPageMethod = document.getElementById('bondPageMethod');
+      const bondNote = document.getElementById('bondNote');
+      const payBondButton = document.getElementById('payBondButton');
+      const refundBondButton = document.getElementById('refundBondButton');
+
+      bondButton.textContent = bondPaid ? 'Manage Bond' : 'Pay / Manage Bond';
+
+      if (bondPaid) {
+        bondStatusText.textContent = 'Paid';
+        bondStatusText.style.color = '#16a34a';
+        finalBondStatus.textContent = 'Verified';
+
+        bondBadge.textContent = 'Bond Paid';
+        bondBadge.className = 'badge success';
+        bondPageStatus.textContent = 'Paid';
+        bondPageMethod.textContent = lastBondPaymentMethod || 'Paid';
+        bondNote.textContent = 'The bond has already been paid. You can request a refund below. After the refund is processed, renting will be locked until the bond is paid again.';
+
+        payBondButton.classList.add('hidden');
+        refundBondButton.classList.remove('hidden');
+      } else {
+        bondStatusText.textContent = 'Unpaid';
+        bondStatusText.style.color = '#0f172a';
+        finalBondStatus.textContent = 'Unpaid';
+
+        bondBadge.textContent = 'Bond Payment';
+        bondBadge.className = 'badge pending';
+        bondPageStatus.textContent = 'Unpaid';
+        bondPageMethod.textContent = lastBondPaymentMethod || 'Not paid yet';
+        bondNote.textContent = 'Select a payment method and pay the bond to unlock renting.';
+
+        payBondButton.classList.remove('hidden');
+        refundBondButton.classList.add('hidden');
+      }
+    }
+
+    function hideWarnings() {
+      document.getElementById('rentWarning').classList.add('hidden');
+      document.getElementById('bondWarning').classList.add('hidden');
+    }
+
+    function goToBondPage() {
+      hideWarnings();
+      updateBondUI();
+      showPage('bondPage');
+    }
+
+    function selectPayment(method, element) {
+      if (bondPaid) {
+        return;
+      }
+
+      selectedPaymentMethod = method;
+      document.querySelectorAll('.payment-option').forEach(option => {
+        option.classList.remove('active');
+      });
+      element.classList.add('active');
+      document.getElementById('bondWarning').classList.add('hidden');
+    }
+
+    function payBond() {
+      if (!selectedPaymentMethod) {
+        document.getElementById('bondWarning').classList.remove('hidden');
+        return;
+      }
+
+      bondPaid = true;
+      lastBondPaymentMethod = selectedPaymentMethod;
+      updateBondUI();
+      alert(`Bond payment successful\nMethod: ${selectedPaymentMethod}\nAmount: $${BOND_AMOUNT.toFixed(2)}`);
+      showPage('homePage');
+    }
+
+    function refundBond() {
+      if (!bondPaid) {
+        return;
+      }
+
+      alert(`Bond refund successful\nMethod: ${lastBondPaymentMethod || 'Original payment method'}\nRefunded amount: $${BOND_AMOUNT.toFixed(2)}\nPlease pay the bond again before your next rental.`);
+
+      bondPaid = false;
+      clearPaymentSelection();
+      updateBondUI();
+      showPage('homePage');
+    }
+
+    function startRental() {
+      hideWarnings();
+
+      if (!bondPaid) {
+        document.getElementById('rentWarning').classList.remove('hidden');
+        return;
+      }
+
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+
+      startTime = Date.now();
+      document.getElementById('timer').textContent = '00:00:00';
+      document.getElementById('fee').textContent = '$0.00';
+      showPage('rentalPage');
+
+      timerInterval = setInterval(() => {
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        const fee = calculateFee(elapsedSeconds);
+
+        document.getElementById('timer').textContent = formatTime(elapsedSeconds);
+        document.getElementById('fee').textContent = '$' + fee;
+      }, 1000);
+    }
+
+    function returnPowerBank() {
+      if (!startTime) return;
+
+      const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      const finalFee = calculateFee(elapsedSeconds);
+
+      clearInterval(timerInterval);
+      timerInterval = null;
+
+      document.getElementById('finalTime').textContent = formatTime(elapsedSeconds);
+      document.getElementById('finalFee').textContent = '$' + finalFee;
+
+      startTime = null;
+      showPage('confirmingPage');
+
+      setTimeout(() => {
+        showPage('returnedPage');
+      }, 2000);
+    }
+
+    function goHome() {
+      hideWarnings();
+      document.getElementById('timer').textContent = '00:00:00';
+      document.getElementById('fee').textContent = '$0.00';
+      document.getElementById('finalTime').textContent = '00:00:00';
+      document.getElementById('finalFee').textContent = '$0.00';
+      updateBondUI();
+      showPage('homePage');
+    }
+
+    updateBondUI();
+  </script>
+</body>
+</html>
