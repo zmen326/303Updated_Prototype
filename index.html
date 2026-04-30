@@ -597,7 +597,7 @@
       <div class="nav-meta">
         <div class="pill">Station A12</div>
         <div class="pill"><span class="dot"></span>Online</div>
-        <div class="pill">$0.50 / 30 min</div>
+        <div class="pill">$3 activation + $0.50 / 30 min</div>
       </div>
     </div>
   </header>
@@ -676,8 +676,8 @@
             <div id="dueIn" class="value">01:00:00</div>
           </div>
           <div class="info-box">
-            <div class="label">Current charge</div>
-            <div id="fee" class="value">$0.50</div>
+            <div class="label">Current total</div>
+            <div id="fee" class="value">$3.50</div>
           </div>
           <div class="info-box">
             <div class="label">Late penalty</div>
@@ -745,6 +745,10 @@
             <strong id="receiptTime">00:00:00</strong>
           </div>
           <div class="receipt-row">
+            <span>Activation fee</span>
+            <strong id="receiptActivation">$3.00</strong>
+          </div>
+          <div class="receipt-row">
             <span>Rental fee</span>
             <strong id="receiptFee">$0.50</strong>
           </div>
@@ -754,7 +758,7 @@
           </div>
           <div class="receipt-row total">
             <span>Total charge</span>
-            <strong id="receiptTotal">$0.50</strong>
+            <strong id="receiptTotal">$3.50</strong>
           </div>
         </div>
 
@@ -767,6 +771,7 @@
 
   <script>
     const PRICE_PER_30_MIN = 0.50;
+    const ACTIVATION_FEE = 3.00;
     const WARNING_SECONDS = 2 * 60 * 60;
     const MANUFACTURING_COST = 35;
     const PENALTY_SURCHARGE = 10;
@@ -845,6 +850,7 @@
 
     function startRental() {
       const bank = getBestBank();
+
       if (!bank) {
         alert("No power bank is currently available.");
         return;
@@ -882,7 +888,7 @@
       return Math.floor((Date.now() - rental.startTime) / 1000);
     }
 
-    function calculateFee(seconds) {
+    function calculateRentalFee(seconds) {
       const blocks = Math.max(1, Math.ceil(seconds / (30 * 60)));
       return blocks * PRICE_PER_30_MIN;
     }
@@ -898,6 +904,12 @@
       return 0;
     }
 
+    function calculateTotalCharge(seconds) {
+      const rentalFee = calculateRentalFee(seconds);
+      const penalty = calculatePenalty(seconds);
+      return ACTIVATION_FEE + rentalFee + penalty;
+    }
+
     function updateRental() {
       if (!rental) return;
 
@@ -906,13 +918,15 @@
       const dueLeft = Math.max(0, dueSeconds - elapsed);
       const progress = Math.min(100, (elapsed / dueSeconds) * 100);
       const battery = Math.max(0, rental.startBattery - Math.floor(elapsed / 480));
-      const fee = calculateFee(elapsed);
+
+      const rentalFee = calculateRentalFee(elapsed);
       const penalty = calculatePenalty(elapsed);
+      const totalCharge = ACTIVATION_FEE + rentalFee + penalty;
 
       document.getElementById("timer").textContent = formatTime(elapsed);
       document.getElementById("dueIn").textContent = formatTime(dueLeft);
       document.getElementById("battery").textContent = battery + "%";
-      document.getElementById("fee").textContent = "$" + fee.toFixed(2);
+      document.getElementById("fee").textContent = "$" + totalCharge.toFixed(2);
       document.getElementById("penalty").textContent = "$" + penalty.toFixed(2);
       document.getElementById("progressBar").style.width = progress + "%";
 
@@ -959,9 +973,9 @@
       document.getElementById("returnOk").classList.add("show");
 
       const elapsed = elapsedSeconds();
-      const fee = calculateFee(elapsed);
+      const rentalFee = calculateRentalFee(elapsed);
       const penalty = calculatePenalty(elapsed);
-      const total = fee + penalty;
+      const total = ACTIVATION_FEE + rentalFee + penalty;
 
       clearInterval(timerInterval);
 
@@ -973,7 +987,8 @@
 
       document.getElementById("receiptBank").textContent = rental.id;
       document.getElementById("receiptTime").textContent = formatTime(elapsed);
-      document.getElementById("receiptFee").textContent = "$" + fee.toFixed(2);
+      document.getElementById("receiptActivation").textContent = "$" + ACTIVATION_FEE.toFixed(2);
+      document.getElementById("receiptFee").textContent = "$" + rentalFee.toFixed(2);
       document.getElementById("receiptPenalty").textContent = "$" + penalty.toFixed(2);
       document.getElementById("receiptTotal").textContent = "$" + total.toFixed(2);
       document.getElementById("receiptSubtitle").textContent =
